@@ -1,3 +1,3 @@
 # LOFAR_Pulses
 
-Code from my MPhys project
+Scripts and notebooks from my MPhys project
