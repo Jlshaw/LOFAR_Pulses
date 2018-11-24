@@ -432,7 +432,7 @@ class Filterbank(object):
             load_data (bool): load data. If set to False, only header will be read.
             header_dict (dict): Create filterbank from header dictionary + data array
             data_array (np.array): Create filterbank from header dict + data array
-            my_header (list): my_header has form [f0,f_delt,nbits,nchans,nifs,tsamp]
+            my_header (list): my_header has form [f0,f_delt,nbytes,nchans,nifs,tsamp]
         """
         
         # Check if block is in odd or even beam
@@ -529,6 +529,7 @@ class Filterbank(object):
             [f0,f_delt,n_bytes,n_chans,n_ifs,t_delt] = my_header     # If file has no header use the values defined in my_header
             self.my_header = my_header
             block_number = int(input('Enter a block number: '))
+            self.block_number = block_number
             t_start = (block_number - 1)*32768
             if t_start:
                 t_stop = t_start + 32768     
