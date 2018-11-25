@@ -412,7 +412,7 @@ class Filterbank(object):
     def __repr__(self):
         return "Filterbank data: %s" % self.filename
 
-    def __init__(self, filename=None, f_start=None, f_stop=None,
+    def __init__(self, filename, Block_Number, f_start=None, f_stop=None,
                  t_start=None, t_stop=None, load_data=True,
                  header_dict=None, data_array=None, my_header=None):
         """ Class for loading and plotting filterbank data.
@@ -433,7 +433,10 @@ class Filterbank(object):
             header_dict (dict): Create filterbank from header dictionary + data array
             data_array (np.array): Create filterbank from header dict + data array
             my_header (list): my_header has form [f0,f_delt,nbytes,nchans,nifs,tsamp]
+           
         """
+        
+     
         
         # Check if block is in odd or even beam
         filename_numbers = re.findall(r'\d+',filename)
@@ -453,9 +456,9 @@ class Filterbank(object):
                 if h5py.is_hdf5(filename):
                     self.read_hdf5(filename, f_start, f_stop, t_start, t_stop, load_data)
                 else:
-                    self.read_filterbank(filename, f_start, f_stop, t_start, t_stop, load_data, my_header)
+                    self.read_filterbank(filename, Block_Number, f_start, f_stop, t_start, t_stop, load_data, my_header)
             else:
-                self.read_filterbank(filename, f_start, f_stop, t_start, t_stop, load_data, my_header)
+                self.read_filterbank(filename, Block_Number, f_start, f_stop, t_start, t_stop, load_data, my_header)
         elif header_dict is not None and data_array is not None: 
             self.gen_from_header(header_dict, data_array)
         else:
@@ -518,7 +521,7 @@ class Filterbank(object):
 
         return i_start, i_stop, chan_start_idx, chan_stop_idx
 
-    def read_filterbank(self, filename=None, f_start=None, f_stop=None,
+    def read_filterbank(self, filename, Block_Number, f_start=None, f_stop=None,
                         t_start=None, t_stop=None, load_data=True, my_header=None):
         
         
@@ -528,9 +531,9 @@ class Filterbank(object):
         if my_header:
             [f0,f_delt,n_bytes,n_chans,n_ifs,t_delt] = my_header     # If file has no header use the values defined in my_header
             self.my_header = my_header
-            block_number = int(input('Enter a block number: '))
-            self.block_number = block_number
-            t_start = (block_number - 1)*32768
+            #block_number = int(input('Enter a block number:'))
+            self.block_number = Block_Number
+            t_start = (self.block_number - 1)*32768
             if t_start:
                 t_stop = t_start + 32768     
             else:
