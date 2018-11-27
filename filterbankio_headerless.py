@@ -425,6 +425,7 @@ class Filterbank(object):
 
         Args:
             filename (str): filename of filterbank file.
+            Block_Number (int): number of block we wish to inspect
             f_start (float): start frequency in MHz
             f_stop (float): stop frequency in MHz
             t_start (int): start integration ID
@@ -531,7 +532,6 @@ class Filterbank(object):
         if my_header:
             [f0,f_delt,n_bytes,n_chans,n_ifs,t_delt] = my_header     # If file has no header use the values defined in my_header
             self.my_header = my_header
-            #block_number = int(input('Enter a block number:'))
             self.block_number = Block_Number
             t_start = (self.block_number - 1)*32768
             if t_start:

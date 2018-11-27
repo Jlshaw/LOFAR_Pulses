@@ -2,7 +2,7 @@
 Training Plots Script
 '''
 
-# This script randomly selects 1000 blocks of data, plots them and saves the plots such that they can be inspected
+# This script randomly selects 1000 (10 currently) blocks of data, plots them and saves the plots such that they can be inspected
 
 # Import Functions
 import numpy as np
@@ -13,7 +13,7 @@ import matplotlib
 import os, random
 
 # Determine how many plots have been made
-plotlist = os.listdir('TrainingPlots/')        ##### NEED TO PUT THIS AGAIN AFTER NEW PLOT CREATED #####
+plotlist = os.listdir('TrainingPlots/')        
 NumberOfPlots = len(plotlist) - 1
 
 # Set directory from which to retrieve files
@@ -38,7 +38,7 @@ while NumberOfPlots < 10:
         
         
     # Name the filterbank and data file
-    dm_filename = fb_filename[:6] + 'dm' + fb_filename[8:25] + '.dat'
+    dm_filename = fb_filename[:6] + 'dm' + fb_filename[8:25] + '.dat'    
     lofarFil = BASE_DATA_PATH + fb_filename
     lofarDM = BASE_DATA_PATH + dm_filename
     
@@ -53,6 +53,16 @@ while NumberOfPlots < 10:
     BlockNumber = random.randint(1, NumberOfBlocks + 1)
     
     
+    # Check that the plot for the selected block does not already exist
+    saveDir = 'TrainingPlots/'
+    saveName = dm_filename[:25] + '_block' + str(BlockNumber) + '.png'
+    savePath = saveDir + saveName
+    
+    if saveName in plotlist:
+        continue
+        
+        
+        
     
     '''
     This section contains the plotting functions from the notebook to plot an individual block
@@ -74,7 +84,7 @@ while NumberOfPlots < 10:
     
     # Get the best dm from the .dat file
     for x in content:
-        if content.index(x) == fil.block_number - 1:
+        if content.index(x) == BlockNumber - 1:
             events = x.split('#')
             bufStr = events[-1]
             BestDM = float(bufStr.split('|')[2].split(' ')[-2])
@@ -148,9 +158,6 @@ while NumberOfPlots < 10:
     
     
     # Save plots to TrainingPlots directory
-    saveDir = 'TrainingPlots/'
-    saveName = dm_filename[:25] + '_block' + str(fil.block_number)
-    savePath = saveDir + saveName + '.png'
     plt.savefig(savePath)
     
     
