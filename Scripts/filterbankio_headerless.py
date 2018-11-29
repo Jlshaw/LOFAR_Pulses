@@ -572,7 +572,7 @@ class Filterbank(object):
         if t_stop:
             ii_stop = t_stop
         n_ints = ii_stop - ii_start
-
+       
 
         # Seek to first integration
         f.seek(int(ii_start * n_bytes * n_ifs * n_chans), 1)

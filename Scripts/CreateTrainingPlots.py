@@ -11,6 +11,8 @@ import dedispersion
 import filterbankio_headerless
 import matplotlib
 import os, random
+import pandas as pd
+from io import StringIO
 
 # Determine how many plots have been made
 plotlist = os.listdir('TrainingPlots/')        
@@ -50,7 +52,7 @@ while NumberOfPlots < 10:
         
         
     # Randomly choose a block number for inspection    
-    BlockNumber = random.randint(1, NumberOfBlocks + 1)
+    BlockNumber = random.randint(1, NumberOfBlocks)
     
     
     # Check that the plot for the selected block does not already exist
@@ -61,7 +63,18 @@ while NumberOfPlots < 10:
     if saveName in plotlist:
         continue
         
-        
+     # Get the best dm and the bin factor from the .dat file
+    for x in content:
+        events = x.split('#')
+        bufStr = events[-1]
+        events = events[0] 
+        df = pd.read_csv(StringIO(events), sep=',', names=['MJD', 'DM', 'SNR', 'BinFactor']).dropna()
+        binFactor = df['BinFactor'].median()
+        if content.index(x) == BlockNumber - 1:
+            BestDM = float(bufStr.split('|')[2].split(' ')[-2])
+            MaxSNR = float(bufStr.split(':')[-1])
+        else:
+            pass    
         
     
     '''
@@ -70,27 +83,31 @@ while NumberOfPlots < 10:
    
     # Read in the data using Filterbank class
     fil = filterbankio_headerless.Filterbank(lofarFil, BlockNumber)
-    timeFactor = 64
-    freqFactor = 8
+    timeFactor = int(binFactor)
+    freqFactor = 1
 
     tInt = fil.my_header[5] # set tInt
 
     freqsHz = fil.freqs * 1e6 # generate array of freqs in Hz
 
     waterfall = np.reshape(fil.data, (fil.data.shape[0], fil.data.shape[2])) # reshape to (n integrations, n freqs)
-    waterfall = waterfall.reshape(int(waterfall.shape[0]/timeFactor), timeFactor, waterfall.shape[1]).sum(axis=1)
-    tInt *= timeFactor
     
     
-    # Get the best dm from the .dat file
-    for x in content:
-        if content.index(x) == BlockNumber - 1:
-            events = x.split('#')
-            bufStr = events[-1]
-            BestDM = float(bufStr.split('|')[2].split(' ')[-2])
-        else:
-            pass
+    #waterfall shape must be divisible be time factor
+    if waterfall.shape[0] % timeFactor == 0:
+        waterfall = waterfall.reshape(int(waterfall.shape[0]/timeFactor), timeFactor, waterfall.shape[1]).sum(axis=1)
+        tInt *= timeFactor
+    else:
+        print('WARNING, %i time samples is not divisible by the time factor %i'%(waterfall.shape[0], timeFactor))
         
+        #add extra dimensions so that waterfall shape is divisible by timeFactor
+        zeros = np.zeros((opts.timeFactor - (waterfall.shape[0] % opts.timeFactor), waterfall.shape[1])) 
+        waterfall = np.concatenate((waterfall, zeros))
+        
+        #sum elements in 1st dimension
+        waterfall = waterfall.reshape(waterfall.shape[0]/opts.timeFactor, opts.timeFactor, waterfall.shape[1]).mean(axis=1) 
+        tInt *= timeFactor
+            
     dm = BestDM
     
     
@@ -144,7 +161,7 @@ while NumberOfPlots < 10:
     ax1 = plt.subplot(gs[0:2,0:3])
     imRawdd = plt.imshow(np.flipud(ddwaterfall.T), extent=(0, tInt*ddwaterfall.shape[0], fil.freqs[0], fil.freqs[-1]), aspect='auto',           cmap=plt.get_cmap(cmap), interpolation='nearest')
     plt.ylabel('Freq. (MHz)')
-    plt.title('LOFAR Event - Dedispersed', fontdict={'fontsize':'small'})
+    plt.title('LOFAR Event (timeFactor: %i,  freqFactor: %i,  MaxSNR: %0.f,  DM: %0.f)'%(timeFactor, freqFactor, MaxSNR, dm), fontdict={'fontsize':'small'})
     ax1.get_xaxis().set_visible(False)
     
     # Time Series Plot
