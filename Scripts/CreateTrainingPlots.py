@@ -101,11 +101,11 @@ while NumberOfPlots < 10:
         print('WARNING, %i time samples is not divisible by the time factor %i'%(waterfall.shape[0], timeFactor))
         
         #add extra dimensions so that waterfall shape is divisible by timeFactor
-        zeros = np.zeros((opts.timeFactor - (waterfall.shape[0] % opts.timeFactor), waterfall.shape[1])) 
+        zeros = np.zeros((timeFactor - (waterfall.shape[0] % timeFactor), waterfall.shape[1])) 
         waterfall = np.concatenate((waterfall, zeros))
         
         #sum elements in 1st dimension
-        waterfall = waterfall.reshape(waterfall.shape[0]/opts.timeFactor, opts.timeFactor, waterfall.shape[1]).mean(axis=1) 
+        waterfall = waterfall.reshape(waterfall.shape[0]/timeFactor, timeFactor, waterfall.shape[1]).mean(axis=1) 
         tInt *= timeFactor
             
     dm = BestDM
