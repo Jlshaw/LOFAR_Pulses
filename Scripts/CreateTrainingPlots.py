@@ -27,8 +27,16 @@ BASE_DATA_PATH = '/oxford_data/FRBSurvey/Archive/'
 Main loop for generating a certain number of plots 
 '''
 
-while NumberOfPlots < 10:
+while NumberOfPlots < 1000:
     
+    if NumberOfPlots == 400:
+        print('400 plots created')
+        
+    if NumberOfPlots == 600:
+        print('600 plots created')
+        
+    if NumberOfPlots == 800:
+        print('800 plots created')
     
     # Randomly select a filterbank file from the base directory   
     randomFile = random.choice(os.listdir(BASE_DATA_PATH))
@@ -71,7 +79,7 @@ while NumberOfPlots < 10:
         df = pd.read_csv(StringIO(events), sep=',', names=['MJD', 'DM', 'SNR', 'BinFactor']).dropna()
         binFactor = df['BinFactor'].median()
         if content.index(x) == BlockNumber - 1:
-            BestDM = float(bufStr.split('|')[2].split(' ')[-2])
+            BestDM = float(bufStr.split('|')[2].split(' ')[3])
             MaxSNR = float(bufStr.split(':')[-1])
         else:
             pass    
@@ -84,7 +92,7 @@ while NumberOfPlots < 10:
     # Read in the data using Filterbank class
     fil = filterbankio_headerless.Filterbank(lofarFil, BlockNumber)
     timeFactor = int(binFactor)
-    freqFactor = 1
+    freqFactor = 8
 
     tInt = fil.my_header[5] # set tInt
 
@@ -105,7 +113,7 @@ while NumberOfPlots < 10:
         waterfall = np.concatenate((waterfall, zeros))
         
         #sum elements in 1st dimension
-        waterfall = waterfall.reshape(waterfall.shape[0]/timeFactor, timeFactor, waterfall.shape[1]).mean(axis=1) 
+        waterfall = waterfall.reshape(int(waterfall.shape[0]/timeFactor), timeFactor, waterfall.shape[1]).mean(axis=1) 
         tInt *= timeFactor
             
     dm = BestDM
