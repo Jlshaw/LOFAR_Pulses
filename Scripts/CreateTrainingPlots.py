@@ -15,8 +15,8 @@ import pandas as pd
 from io import StringIO
 
 # Determine how many plots have been made
-plotlist = os.listdir('TrainingPlots/')        
-NumberOfPlots = len(plotlist) - 1
+plotlist = os.listdir('TrainingPlots1/')        
+NumberOfPlots = len(plotlist)
 
 # Set directory from which to retrieve files
 BASE_DATA_PATH = '/oxford_data/FRBSurvey/Archive/'
@@ -29,20 +29,22 @@ Main loop for generating a certain number of plots
 
 while NumberOfPlots < 1000:
     
-    if NumberOfPlots == 400:
-        print('400 plots created')
-        
-    if NumberOfPlots == 600:
-        print('600 plots created')
-        
-    if NumberOfPlots == 800:
-        print('800 plots created')
+    benchmarks = []
+    for i in range(1,40):
+        n = 25*i
+        benchmarks.append(n)
+    
+    if NumberOfPlots in benchmarks:
+        print(NumberOfPlots, 'plots created')
     
     # Randomly select a filterbank file from the base directory   
     randomFile = random.choice(os.listdir(BASE_DATA_PATH))
     
     while randomFile[-4:] == '.dat':
         randomFile = random.choice(os.listdir(BASE_DATA_PATH))
+    
+    if randomFile[-4:] != '.fil':
+        continue
     else:
         fb_filename = randomFile
         
@@ -64,14 +66,19 @@ while NumberOfPlots < 1000:
     
     
     # Check that the plot for the selected block does not already exist
-    saveDir = 'TrainingPlots/'
+    saveDir = 'TrainingPlots1/'
     saveName = dm_filename[:25] + '_block' + str(BlockNumber) + '.png'
     savePath = saveDir + saveName
     
     if saveName in plotlist:
         continue
         
-     # Get the best dm and the bin factor from the .dat file
+    # Check that plot is not in original batch
+    plotsCreated = os.listdir('TrainingPlots/')
+    if saveName in plotsCreated:
+        continue
+        
+    # Get the best dm and the bin factor from the .dat file
     for x in content:
         events = x.split('#')
         bufStr = events[-1]
@@ -106,7 +113,7 @@ while NumberOfPlots < 1000:
         waterfall = waterfall.reshape(int(waterfall.shape[0]/timeFactor), timeFactor, waterfall.shape[1]).sum(axis=1)
         tInt *= timeFactor
     else:
-        print('WARNING, %i time samples is not divisible by the time factor %i'%(waterfall.shape[0], timeFactor))
+        #print('WARNING, %i time samples is not divisible by the time factor %i'%(waterfall.shape[0], timeFactor))
         
         #add extra dimensions so that waterfall shape is divisible by timeFactor
         zeros = np.zeros((timeFactor - (waterfall.shape[0] % timeFactor), waterfall.shape[1])) 
@@ -181,14 +188,14 @@ while NumberOfPlots < 1000:
     plt.xlabel('Time (s)')
     plt.ylabel('Flux (uncalibrated units)')
     
-    
+    plt.ioff()
     # Save plots to TrainingPlots directory
     plt.savefig(savePath)
     
     
     # Update number of saved plots
-    plotlist = os.listdir('TrainingPlots/')        
-    NumberOfPlots = len(plotlist) - 1
+    plotlist = os.listdir('TrainingPlots1/')        
+    NumberOfPlots = len(plotlist)
     
     
     
