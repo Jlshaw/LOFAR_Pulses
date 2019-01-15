@@ -1,4 +1,4 @@
-#!usr/bin/python3
+#!/usr/bin/python3
 '''
 Load images with wildcards of from a directory and provide a simple interface to label images, write labels to a pickle file
 '''
@@ -14,24 +14,24 @@ import pickle
 
 
 # Create dictionary of plot labels
-idxLabelDict = { 0  : 'Interesting, follow up',
-                 1  : 'Low DM Pulsed RFI',
-                 2  : '143-144MHz Wavy RFI',
-                 3  : 'Saturation Calibration Error',
-                 4  : '146MHz Wavy RFI',
-                 5  : 'Mid DM Wavy RFI',
-                 6  : 'High DM Wavy RFI',
-                 7  : 'Noisy Wavy RFI',
-                 8  : 'Up Step RFI',
-                 9  : 'Down Step RFI',
-                 a : 'Large SNR DM320 RFI',
-                 s : 'Broadband Noisy RFI',
-                 d : 'Overflow',
-                 f : 'Error in Plotting/Data',
-                 g : 'Low DM Pulsars (DM<15)',
-                 j : 'High DM Pulsars (DM>15)' }
+idxLabelDict = { 0   : 'Interesting, follow up',
+                 1   : 'Low DM Pulsed RFI',
+                 2   : '143-144MHz Wavy RFI',
+                 3   : 'Saturation Calibration Error',
+                 4   : '146MHz Wavy RFI',
+                 5   : 'Mid DM Wavy RFI',
+                 6   : 'High DM Wavy RFI',
+                 7   : 'Noisy Wavy RFI',
+                 8   : 'Up Step RFI',
+                 9   : 'Down Step RFI',
+                 'a' : 'Large SNR DM320 RFI',
+                 's' : 'Broadband Noisy RFI',
+                 'd' : 'Overflow',
+                 'f' : 'Error in Plotting/Data',
+                 'g' : 'Low DM Pulsars (DM<15)',
+                 'j' : 'High DM Pulsars (DM>15)' }
 
-LabelStrList = map(str, idxLabelDict)
+labelStrList = map(str, idxLabelDict)
 
 
 def keyInformationStr(idxLabelDict):
@@ -43,7 +43,7 @@ def keyInformationStr(idxLabelDict):
             '\tu OR r: remove label\n' + \
             '\th: re-print this information\n'
 
-    for key,val in idxLabelDict.iteritems():
+    for key,val in idxLabelDict.items():
         oStr += '\t%s: %s\n'%(str(key), val)
 
     return oStr
