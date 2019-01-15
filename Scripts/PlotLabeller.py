@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!usr/bin/python3
 '''
 Load images with wildcards of from a directory and provide a simple interface to label images, write labels to a pickle file
 '''
@@ -24,12 +24,12 @@ idxLabelDict = { 0  : 'Interesting, follow up',
                  7  : 'Noisy Wavy RFI',
                  8  : 'Up Step RFI',
                  9  : 'Down Step RFI',
-                 10 : 'Large SNR DM320 RFI',
-                 11 : 'Broadband Noisy RFI',
-                 12 : 'Overflow',
-                 13 : 'Error in Plotting/Data',
-                 14 : 'Low DM Pulsars (DM<15)',
-                 15 : 'High DM Pulsars (DM>15)' }
+                 a : 'Large SNR DM320 RFI',
+                 s : 'Broadband Noisy RFI',
+                 d : 'Overflow',
+                 f : 'Error in Plotting/Data',
+                 g : 'Low DM Pulsars (DM<15)',
+                 j : 'High DM Pulsars (DM>15)' }
 
 LabelStrList = map(str, idxLabelDict)
 
