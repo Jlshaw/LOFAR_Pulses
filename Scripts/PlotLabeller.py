@@ -14,16 +14,16 @@ import pickle
 
 
 # Create dictionary of plot labels
-idxLabelDict = { 0   : 'Interesting, follow up',
-                 1   : 'Low DM Pulsed RFI',
-                 2   : '143-144MHz Wavy RFI',
-                 3   : 'Saturation Calibration Error',
-                 4   : '146MHz Wavy RFI',
-                 5   : 'Mid DM Wavy RFI',
-                 6   : 'High DM Wavy RFI',
-                 7   : 'Noisy Wavy RFI',
-                 8   : 'Up Step RFI',
-                 9   : 'Down Step RFI',
+idxLabelDict = { '0' : 'Interesting, follow up',
+                 '1' : 'Low DM Pulsed RFI',
+                 '2' : '143-144MHz Wavy RFI',
+                 '3' : 'Saturation Calibration Error',
+                 '4' : '146MHz Wavy RFI',
+                 '5' : 'Mid DM Wavy RFI',
+                 '6' : 'High DM Wavy RFI',
+                 '7' : 'Noisy Wavy RFI',
+                 '8' : 'Up Step RFI',
+                 '9' : 'Down Step RFI',
                  'a' : 'Large SNR DM320 RFI',
                  's' : 'Broadband Noisy RFI',
                  'd' : 'Overflow',
@@ -31,7 +31,7 @@ idxLabelDict = { 0   : 'Interesting, follow up',
                  'g' : 'Low DM Pulsars (DM<15)',
                  'j' : 'High DM Pulsars (DM>15)' }
 
-labelStrList = map(str, idxLabelDict)
+labelStrList = list(map(str, idxLabelDict))
 
 
 def keyInformationStr(idxLabelDict):
@@ -184,8 +184,10 @@ if __name__ == '__main__':
             plt.pause(0.01)
 
         elif ch in labelStrList:
-            print('Label (%i):'%int(ch), idxLabelDict[int(ch)])
-            labelDict[baseName] = int(ch)
+            #print('Label (%i):'%int(ch), idxLabelDict[int(ch)])
+            #labelDict[baseName] = int(ch)
+            print('Label (%s):'%str(ch), idxLabelDict[str(ch)])
+            labelDict[baseName] = str(ch)
 
         elif ch=='u' or ch=='r': # remove label
             del labelDict[baseName]
