@@ -20,12 +20,11 @@ idxLabelDict = { '0' : 'Interesting, follow up',
                  '4' : 'Variable freq vs time (Set1 5,6,7)',
                  '5' : 'Flat baseline noise',
                  '6' : 'State change (Set1 8,9)',
-                 '7' : 'Noisy Wavy RFI',
-                 '8' : 'Overflow (Set1 10,12,13)',
-                 '9' : 'Broadband RFI (Set1 11)',
-                 'a' : 'Impulse (Set1 1,3)',
-                 's' : 'DM 2-15 Pulsars',
-                 'd' : 'DM > 15 Pulsars', }
+                 '7' : 'Overflow (Set1 10,12,13)',
+                 '8' : 'Broadband RFI (Set1 11)',
+                 '9' : 'Impulse (Set1 1,3)',
+                 'a' : 'DM 2-15 Pulsars',
+                 's' : 'DM > 15 Pulsars', }
 
 labelStrList = list(map(str, idxLabelDict))
 
