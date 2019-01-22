@@ -1,8 +1,7 @@
-#!/usr/bin/python3
+#!/usr/bin/python
 '''
 Load images with wildcards of from a directory and provide a simple interface to label images, write labels to a pickle file
 '''
-
 
 # Import functions/packages
 import sys,os
@@ -29,7 +28,8 @@ idxLabelDict = { '0' : 'Interesting, follow up',
                  'd' : 'Overflow',
                  'f' : 'Error in Plotting/Data',
                  'g' : 'Low DM Pulsars (DM<15)',
-                 'j' : 'High DM Pulsars (DM>15)' }
+                 'j' : 'High DM Pulsars (DM>15)', 
+                 'k' : 'Miscellaneous RFI' }
 
 labelStrList = list(map(str, idxLabelDict))
 
