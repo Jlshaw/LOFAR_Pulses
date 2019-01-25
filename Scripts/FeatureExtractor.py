@@ -26,6 +26,7 @@ FeaturesDict = {}
 
 # Get a print out of how many plots have had features extracted
 n = 0
+benchmarks = [i for i in range(0,2000,25)]
 
 
 '''
@@ -150,6 +151,7 @@ for plot_filename in plotlist:
     ddwaterfall = ddwaterfall[startIdx:endIdx,:]
 
     
+    ############################################
     # Save ddTimeSeries and metaData for Griffin
     outputDict = {'metaData' : metaData,
                   'ddTimeSeries' : ddTimeSeries }
@@ -157,6 +159,7 @@ for plot_filename in plotlist:
     output = open('ddTimeSeriesData/' + plot_filename + '_ddts.pkl', 'wb' )
     pickle.dump(outputDict, output)
     output.close()
+    ############################################
     
     
     '''
@@ -243,7 +246,6 @@ for plot_filename in plotlist:
     
     # Print how many plots have had features extracted
     n += 1
-    benchmarks = [i for i in range(0,2000,25)]
     if n in benchmarks:
         print('Features extracted from', n, 'plots')
   
@@ -254,6 +256,7 @@ Convert the dictionary of features to a dataframe and save it as a pickle file
   
 FeaturesDF = pd.DataFrame(FeaturesDict)
 FeaturesDF = FeaturesDF.transpose()
+FeaturesDF = FeaturesDF.apply(pd.to_numeric)
 FeaturesDF.to_pickle('FeaturesDataFrame.pkl')
 
 
