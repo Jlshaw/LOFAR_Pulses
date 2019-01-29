@@ -57,7 +57,7 @@ def GaussianTests(arr):
 def windowedStats(arr, nseg=16):
     """Statistics on segments of an array"""
     #splits array into nseg segments and creates empty arrays for each value, each array has nseg elements
-    segSize = arr.shape[0] / nseg #how many elements in each segment
+    segSize = int(arr.shape[0] / nseg) #how many elements in each segment
     minVals = np.zeros(nseg)
     maxVals = np.zeros(nseg)
     meanVals = np.zeros(nseg)
@@ -67,6 +67,7 @@ def windowedStats(arr, nseg=16):
     #takes sidth segment and assigns value for that segment to sidth element of value array
     #put KS testing in here too?
     for sid in np.arange(nseg):
+        sid = int(sid)
         minVals[sid] = arr[segSize*sid:segSize*(sid+1)].min()
         maxVals[sid] = arr[segSize*sid:segSize*(sid+1)].max()
         meanVals[sid] = arr[segSize*sid:segSize*(sid+1)].mean()
@@ -78,7 +79,7 @@ def windowedStats(arr, nseg=16):
 
 
  
-def countValOverflows(arr, threshold=1e20):
+def countValOverflows(arr, threshold=400):
     """Return a count of the number of values which are above a given threshold"""
     nCount = arr[np.abs(arr)>threshold].size
     
@@ -88,8 +89,8 @@ def countValOverflows(arr, threshold=1e20):
 
 def pixelizeSpectrogram(arr, nTime=16, nChan=4):
     """Coarsely pixelize a spectrogram"""
-    timeSize = arr.shape[0] / nTime
-    chanSize = arr.shape[1] / nChan
+    timeSize = int(arr.shape[0] / nTime)
+    chanSize = int(arr.shape[1] / nChan)
     #empty value arrays
     minVals = np.zeros((nTime, nChan))
     maxVals = np.zeros((nTime, nChan))
@@ -98,6 +99,8 @@ def pixelizeSpectrogram(arr, nTime=16, nChan=4):
     #cycles over different nTime x nChan segments of arr and saves max/min/mean in tidth element of value arrays
     for tid in np.arange(nTime):
         for cid in np.arange(nChan):
+            tid = int(tid)
+            cid = int(cid)
             minVals[tid,cid] = arr[timeSize*tid:timeSize*(tid+1), chanSize*cid:chanSize*(cid+1)].min()
             maxVals[tid,cid] = arr[timeSize*tid:timeSize*(tid+1), chanSize*cid:chanSize*(cid+1)].max()
             meanVals[tid,cid] = arr[timeSize*tid:timeSize*(tid+1), chanSize*cid:chanSize*(cid+1)].mean()
@@ -108,14 +111,19 @@ def pixelizeSpectrogram(arr, nTime=16, nChan=4):
 
 def countPeaks(arr):
     """Count the number of points that exceed X*std centred on the median"""
-    arrMedian = arr.median()
+    arrMedian = np.median(arr)
     std = arr.std()
+    posThreshold = np.zeros(3)
+    negThreshold = np.zeros(3)
+    posPeaks = np.zeros(3)
+    negPeaks = np.zeros(3)
     X = [2,3,5]
     for i in X:
-        posThreshold[i] = arrMedian + i*std
-        negThreshold[i] = arrMedian - i*std
-        posPeaks[i] = arr[arr > posThreshold[i]].size
-        negPeaks[i] = arr[arr < negThreshold[i]].size
+        x = X.index(i)
+        posThreshold[x] = arrMedian + i*std
+        negThreshold[x] = arrMedian - i*std
+        posPeaks[x] = arr[arr > posThreshold[x]].size
+        negPeaks[x] = arr[arr < negThreshold[x]].size
     
     return {'posPeaks': posPeaks, 'negPeaks': negPeaks}
     

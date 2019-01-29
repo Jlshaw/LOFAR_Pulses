@@ -18,14 +18,15 @@ from io import StringIO
 BASE_DATA_PATH = '/oxford_data/FRBSurvey/Archive/'
 
 # Get list of plots we want to get stats for 
-plotlist = os.listdir('TrainingPlots/')
-print('Extracting features for', len(plotlist), 'in TrainingPlots directory')
+plotlist = os.listdir('/home/jshaw/TrainingPlots/')
+print('Extracting features from', len(plotlist), 'plots in TrainingPlots directory')
 
 # Create an empty dictionary in which we will save the dictionaries of features 
-FeauresDict = {}
+FeaturesDict = {}
 
 # Get a print out of how many plots have had features extracted
 n = 0
+benchmarks = [i for i in range(0,2000,25)]
 
 
 '''
@@ -51,17 +52,18 @@ for plot_filename in plotlist:
     content = open(lofarDM).read()
     content = content.split('# ------')[-1].split('Done')[:-1]
     for x in content:
-        events = x.split('#')
-        bufStr = events[-1]
-        events = events[0] 
-        df = pd.read_csv(StringIO(events), sep=',', names=['MJD', 'DM', 'SNR', 'BinFactor']).dropna()
-        binFactor = df['BinFactor'].median()
         if content.index(x) == BlockNumber - 1:
+            events = x.split('#')
+            bufStr = events[-1]
+            events = events[0] 
+            df = pd.read_csv(StringIO(events), sep=',', names=['MJD', 'DM', 'SNR', 'BinFactor']).dropna()
+            binFactor = df['BinFactor'].median()
             BestDM = float(bufStr.split('|')[2].split(' ')[3])
             MaxSNR = float(bufStr.split(':')[-1])
+            mjd0 = bufStr.split(' ')[6]
         else:
             pass    
-        mjd0 = bufStr.split(' ')[6]
+        
         
     # Add some of the relevant data to metaData dictionary
     metaData['Beam'] = BeamID
@@ -149,6 +151,7 @@ for plot_filename in plotlist:
     ddwaterfall = ddwaterfall[startIdx:endIdx,:]
 
     
+    ############################################
     # Save ddTimeSeries and metaData for Griffin
     outputDict = {'metaData' : metaData,
                   'ddTimeSeries' : ddTimeSeries }
@@ -156,6 +159,7 @@ for plot_filename in plotlist:
     output = open('ddTimeSeriesData/' + plot_filename + '_ddts.pkl', 'wb' )
     pickle.dump(outputDict, output)
     output.close()
+    ############################################
     
     
     '''
@@ -170,7 +174,7 @@ for plot_filename in plotlist:
     metaData['globalTimeStatsmin'] = globalTimeStats['min']
     metaData['globalTimeStatsmax'] = globalTimeStats['max']
     metaData['globalTimeStatsmeanMedianRatio'] = globalTimeStats['meanMedianRatio']
-    metaData['globalTimeStatsminMaxRatio'] = globalTimeStats['minMaxRatio']
+    metaData['globalTimeStatsminMaxRatio'] = globalTimeStats['maxMinRatio']
     metaData['globalTimeStatsposCount'] = globalTimeStats['posCount']
     metaData['globalTimeStatsnegCount'] = globalTimeStats['negCount']
     metaData['globalTimeStatsposPct'] = globalTimeStats['posPct']
@@ -184,7 +188,7 @@ for plot_filename in plotlist:
     metaData['globalDedispTimeStatsmin'] = globalDedispTimeStats['min']
     metaData['globalDedispTimeStatsmax'] = globalDedispTimeStats['max']
     metaData['globalDedispTimeStatsmeanMedianRatio'] = globalDedispTimeStats['meanMedianRatio']
-    metaData['globalDedispTimeStatsminMaxRatio'] = globalDedispTimeStats['minMaxRatio']
+    metaData['globalDedispTimeStatsminMaxRatio'] = globalDedispTimeStats['maxMinRatio']
     metaData['globalDedispTimeStatsposCount'] = globalDedispTimeStats['posCount']
     metaData['globalDedispTimeStatsnegCount'] = globalDedispTimeStats['negCount']
     metaData['globalDedispTimeStatsposPct'] = globalDedispTimeStats['posPct']
@@ -192,26 +196,26 @@ for plot_filename in plotlist:
     
     # Add overflows to dictionary
     overflows = fef.countValOverflows(waterfall)
-    metaData['overflowCounts'] = overflows['nCount']
+    metaData['overflowCounts'] = overflows['ncount']
     metaData['overflowPct'] = overflows['pct']
     
     # Add windTimeSeries to dictionary
     windTimeStats = fef.windowedStats(timeSeries)
     for i in range(16):
-        metaData['windTimeSeriesmean' + str(i)] = windTimeSeries['mean'][i]
-        metaData['windTimeSeriesmax' + str(i)] = windTimeSeries['max'][i]
-        metaData['windTimeSeriesmin' + str(i)] = windTimeSeries['min'][i]
-        metaData['windTimeSeriesstd' + str(i)] = windTimeSeries['std'][i]
-        metaData['windTimeSeriessnr' + str(i)] = windTimeSeries['snr'][i]
+        metaData['windTimeSeriesmean' + str(i)] = windTimeStats['mean'][i]
+        metaData['windTimeSeriesmax' + str(i)] = windTimeStats['max'][i]
+        metaData['windTimeSeriesmin' + str(i)] = windTimeStats['min'][i]
+        metaData['windTimeSeriesstd' + str(i)] = windTimeStats['std'][i]
+        metaData['windTimeSeriessnr' + str(i)] = windTimeStats['snr'][i]
     
     # Add windDedispTimeSeries to dictionary
     windDedispTimeStats = fef.windowedStats(ddTimeSeries)
     for i in range(16):
-        metaData['windDedispTimeSeriesmean' + str(i)] = windDedispTimeSeries['mean'][i]
-        metaData['windDedispTimeSeriesmax' + str(i)] = windDedispTimeSeries['max'][i]
-        metaData['windDedispTimeSeriesmin' + str(i)] = windDedispTimeSeries['min'][i]        
-        metaData['windDedispTimeSeriesstd' + str(i)] = windDedispTimeSeries['std'][i]
-        metaData['windDedispTimeSeriessnr' + str(i)] = windDedispTimeSeries['snr'][i]
+        metaData['windDedispTimeSeriesmean' + str(i)] = windDedispTimeStats['mean'][i]
+        metaData['windDedispTimeSeriesmax' + str(i)] = windDedispTimeStats['max'][i]
+        metaData['windDedispTimeSeriesmin' + str(i)] = windDedispTimeStats['min'][i]        
+        metaData['windDedispTimeSeriesstd' + str(i)] = windDedispTimeStats['std'][i]
+        metaData['windDedispTimeSeriessnr' + str(i)] = windDedispTimeStats['snr'][i]
     
     # Add pixels to dictionary
     pixels = fef.pixelizeSpectrogram(waterfall)
@@ -225,24 +229,25 @@ for plot_filename in plotlist:
     nPeaks = fef.countPeaks(ddTimeSeries)
     X = [2,3,5]
     for i in X:
-        metaData['posPeaks' + str(i) + 'std'] = nPeaks['posPeaks'][i]
-        metaData['negPeaks' + str(i) + 'std'] = nPeaks['negPeaks'][i]
+        x = X.index(i)
+        metaData['posPeaks' + str(i) + 'std'] = nPeaks['posPeaks'][x]
+        metaData['negPeaks' + str(i) + 'std'] = nPeaks['negPeaks'][x]
         
     # Add GaussianTests to dictionary
     GaussianTests = fef.GaussianTests(timeSeries)
     metaData['GaussianTestskurtosis'] = GaussianTests['kurtosis']
     metaData['GaussianTestsskew'] = GaussianTests['skew']
-    metaData['GaussianTestsks'] = GaussianTests['ks']
+    metaData['GaussianTestsksD'] = GaussianTests['ks'][0]
+    metaData['GaussianTestskspvalue'] = GaussianTests['ks'][1]
     
     
     # Save the metaData to the features dictionary with the plot filename
-    FeatureDict[plot_filename] = metaData
+    FeaturesDict[plot_filename] = metaData
     
     # Print how many plots have had features extracted
     n += 1
-    benchmarks = [i for i in range(0,2000,25)
     if n in benchmarks:
-          print('Features extracted from', n, 'plots')
+        print('Features extracted from', n, 'plots')
   
 
 '''
@@ -251,6 +256,7 @@ Convert the dictionary of features to a dataframe and save it as a pickle file
   
 FeaturesDF = pd.DataFrame(FeaturesDict)
 FeaturesDF = FeaturesDF.transpose()
-FeaturesDF.to_pickle('FeaturesDF.pkl')
+FeaturesDF = FeaturesDF.apply(pd.to_numeric)
+FeaturesDF.to_pickle('FeaturesDataFrame.pkl')
 
 
